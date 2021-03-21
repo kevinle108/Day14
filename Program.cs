@@ -25,7 +25,11 @@ namespace Day14
             {
                 var doctors = doctorHours.ToList();
                 var patients = patientHours.ToList();
-                var result = new List<string>();                
+                var result = new List<string>();
+                for (int i = 0; i < doctors.Count; i++)
+                {
+                    result.Add($"Doctor {i + 1}'s Appointments: ");
+                }
                 Scheduler(doctors, patients, result);
             }
 
@@ -53,10 +57,12 @@ namespace Day14
                 {
                     newDocs[i] -= patients[0];
                     newPats.RemoveAt(0);
-                    result.Add($"{patients[0]} hours added to Doctor[{i}] ({doctors[i]}), doctor now has {newDocs[i]} hours remaining");
+                    int savedStringLength = result[i].Length;
+                    result[i] += $"{patients[0]}hr ";
+                    //result.Add($"{patients[0]} hours added to Doctor[{i}] ({doctors[i]}), doctor now has {newDocs[i]} hours remaining");
                     callSuccessful = Scheduler(newDocs, newPats, result);
                     if (callSuccessful) return true;
-                    else result.RemoveAt(result.Count - 1);
+                    else result[i] = result[i].Substring(0, savedStringLength);
                 }                
             }
             return false;
