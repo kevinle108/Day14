@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Day14
 {
@@ -7,87 +8,80 @@ namespace Day14
     {
         static void Main(string[] args)
         {
-            int[,] grid =
-                        {
-                { 5, 3, 4, 1, 4, 1, 4, 2, 7, 3, 6, 1 },
-                { 2, 2, 7, 7, 4, 5, 6, 8, 3, 4, 3, 2 },
-                { 8, 2, 5, 3, 7, 2, 6, 4, 1, 3, 7, 5 },
-                { 6, 6, 7, 2, 4, 2, 1, 5, 4, 3, 5, 7 },
-                { 1, 5, 5, 2, 5, 3, 2, 8, 7, 5, 4, 1 },
-                { 2, 8, 3, 3, 1, 1, 5, 6, 8, 6, 5, 8 },
-                { 7, 1, 1, 2, 2, 1, 2, 3, 2, 3, 7, 7 },
-                { 2, 3, 2, 4, 7, 1, 4, 6, 3, 4, 7, 2 },
-                { 6, 8, 2, 3, 1, 6, 3, 7, 7, 8, 2, 7 },
-                { 7, 8, 1, 8, 1, 1, 2, 1, 7, 2, 6, 1 }
-            };
+            int[] doctorHours = { 7, 2, 4, 2 };
+            int[] patientHours = { 1, 2, 5, 3, 1, 2, 1 };
+            //var linq = doctorHours.Where(x => x >= 9).ToList();
+            //printList(linq);
 
-            Grid(grid);
+            Scheduler(doctorHours, patientHours);
+
+
         }
-        static void Grid(int[,] grid)
+
+        static void Scheduler(int[] doctorHours, int[] patientHours)
         {
-            var pos = new Position(0, 0);
-            var result = new List<Position>();
-            if (Grid(grid, pos, result))
-            {
-                // print the result
-                Console.WriteLine("yes, it's possible");
-                foreach (Position position in result)
-                {
-                    Console.WriteLine($"({position.X}, {position.Y})");
-                }
-            }
+            if (patientHours.Sum() > doctorHours.Sum()) Console.WriteLine("Not all patients can be seen!");
             else
             {
-                // print not possible
-                Console.WriteLine("no, not possible");
+                var doctors = doctorHours.ToList();
+                var patients = patientHours.ToList();
+                var result = new List<string>();                
+                Scheduler(doctors, patients, result);
             }
+
+
         }
 
-        static bool Grid(int[,] grid, Position pos, List<Position> result)
+        static bool Scheduler(List<int> doctors, List<int> patients, List<string> result)
         {
-            if (pos.IsHereBefore(result) || !pos.IsWithinBound(grid)) return false;            
-            int d = grid[pos.Y, pos.X];
-            result.Add(pos);
-            if (pos.IsAtDestination(grid)) return true;
-            if (result.Count >= 1000) return false;
-            if (Grid(grid, new Position(pos.X + d, pos.Y), result)) return true; // go right
-            if (Grid(grid, new Position(pos.X, pos.Y + d), result)) return true; // go down            
-            if (Grid(grid, new Position(pos.X - d, pos.Y), result)) return true; // go left
-            if (Grid(grid, new Position(pos.X, pos.Y - d), result)) return true; // go up
-            result.RemoveAt(result.Count - 1);
-            return false;
-        }
-    }
-
-    public class Position
-    {
-        public int X;
-        public int Y;
-
-        public Position(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public bool IsWithinBound(int[,] grid)
-        {
-            return (X >= 0 && X <= grid.GetUpperBound(1) && Y >= 0 && Y <= grid.GetUpperBound(0));
-        }
-
-        public bool IsAtDestination(int[,] grid)
-        {
-            return (X == grid.GetUpperBound(1) && Y == grid.GetUpperBound(0));
-        }
-
-        public bool IsHereBefore(List<Position> positions)
-        {
-            foreach (Position p in positions)
+            //PrintList(doctors);
+            //PrintList(patients);
+            //Console.WriteLine();
+            if (patients.Count == 0)
             {
-                if (X == p.X && Y == p.Y) return true; 
+                //PrintList(doctors);
+                //PrintList(patients);
+                result.ForEach(x => Console.WriteLine(x));
+                return true;
+            }
+            for (int i = 0; i < doctors.Count; i++)
+            {
+                var newDocs = new List<int>(doctors);
+                var newPats = new List<int>(patients);
+                bool callSuccessful;
+                if (doctors[i] >= patients[0])
+                {
+                    newDocs[i] -= patients[0];
+                    newPats.RemoveAt(0);
+                    result.Add($"{patients[0]} hours added to Doctor[{i}] ({doctors[i]}), doctor now has {newDocs[i]} hours remaining");
+                    callSuccessful = Scheduler(newDocs, newPats, result);
+                    if (callSuccessful) return true;
+                    else result.RemoveAt(result.Count - 1);
+                }                
             }
             return false;
         }
-    }
 
+        static void PrintStack(Stack<string> stack)
+        {
+            Console.WriteLine("Printing Schedule:");
+            var list = new List<string>();
+            for (int i = 0; i < stack.Count; i++)
+            {
+                list.Add(stack.Pop());
+            }
+            list.ForEach(x => Console.WriteLine(x));
+        }
+
+
+        static void PrintList(List<int> list)
+        {
+            Console.Write("{");
+            foreach (var item in list)
+            {
+                Console.Write($" {item} ");
+            }
+            Console.Write("}\n");
+        }
+    }
 }
