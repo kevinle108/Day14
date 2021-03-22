@@ -10,12 +10,7 @@ namespace Day14
         {
             int[] doctorHours = { 7, 2, 4, 2 };
             int[] patientHours = { 1, 2, 5, 3, 1, 2, 1 };
-            //var linq = doctorHours.Where(x => x >= 9).ToList();
-            //printList(linq);
-
             Scheduler(doctorHours, patientHours);
-
-
         }
 
         static void Scheduler(int[] doctorHours, int[] patientHours)
@@ -32,19 +27,12 @@ namespace Day14
                 }
                 Scheduler(doctors, patients, result);
             }
-
-
         }
 
         static bool Scheduler(List<int> doctors, List<int> patients, List<string> result)
         {
-            //PrintList(doctors);
-            //PrintList(patients);
-            //Console.WriteLine();
             if (patients.Count == 0)
             {
-                //PrintList(doctors);
-                //PrintList(patients);
                 result.ForEach(x => Console.WriteLine(x));
                 return true;
             }
@@ -59,7 +47,6 @@ namespace Day14
                     newPats.RemoveAt(0);
                     int savedStringLength = result[i].Length;
                     result[i] += $"{patients[0]}hr ";
-                    //result.Add($"{patients[0]} hours added to Doctor[{i}] ({doctors[i]}), doctor now has {newDocs[i]} hours remaining");
                     callSuccessful = Scheduler(newDocs, newPats, result);
                     if (callSuccessful) return true;
                     else result[i] = result[i].Substring(0, savedStringLength);
@@ -67,18 +54,6 @@ namespace Day14
             }
             return false;
         }
-
-        static void PrintStack(Stack<string> stack)
-        {
-            Console.WriteLine("Printing Schedule:");
-            var list = new List<string>();
-            for (int i = 0; i < stack.Count; i++)
-            {
-                list.Add(stack.Pop());
-            }
-            list.ForEach(x => Console.WriteLine(x));
-        }
-
 
         static void PrintList(List<int> list)
         {
