@@ -8,61 +8,77 @@ namespace Day14
     {
         static void Main(string[] args)
         {
-            int[] doctorHours = { 7, 2, 4, 2 };
-            int[] patientHours = { 1, 2, 5, 3, 1, 2, 1 };
-            Scheduler(doctorHours, patientHours);
+            double[,] coords = {
+                { 11, 10 },
+                { 16, 16 },
+                { 3, 15 },
+                { 6, 17 },
+                { 10, 5 },
+                { 14, 11 },
+                { 5, 19 },
+                { 15, 18 },
+                { 17, 20 },
+                { 18, 22}
+             };
+            double d = 6.0;
+
+            //double[] arr = { 11, 10 };
+            //var pos = new Position(arr);
+            //pos.Print();
+
+            List<Position> towers = ConvertToList(coords);
+            PrintDistances(4, towers);
+            //towers.ForEach(pos => pos.Print());
+
+            
+
+
+            //Radio(coords, d);
         }
 
-        static void Scheduler(int[] doctorHours, int[] patientHours)
+        static bool Radio(double[,] coords, double d)
         {
-            if (patientHours.Sum() > doctorHours.Sum()) Console.WriteLine("Not all patients can be seen!");
-            else
-            {
-                var doctors = doctorHours.ToList();
-                var patients = patientHours.ToList();
-                var result = new List<string>();
-                for (int i = 0; i < doctors.Count; i++)
-                {
-                    result.Add($"Doctor {i + 1}'s Appointments: ");
-                }
-                Scheduler(doctors, patients, result);
-            }
-        }
 
-        static bool Scheduler(List<int> doctors, List<int> patients, List<string> result)
-        {
-            if (patients.Count == 0)
-            {
-                result.ForEach(x => Console.WriteLine(x));
-                return true;
-            }
-            for (int i = 0; i < doctors.Count; i++)
-            {
-                var newDocs = new List<int>(doctors);
-                var newPats = new List<int>(patients);
-                bool callSuccessful;
-                if (doctors[i] >= patients[0])
-                {
-                    newDocs[i] -= patients[0];
-                    newPats.RemoveAt(0);
-                    int savedStringLength = result[i].Length;
-                    result[i] += $"{patients[0]}hr ";
-                    callSuccessful = Scheduler(newDocs, newPats, result);
-                    if (callSuccessful) return true;
-                    else result[i] = result[i].Substring(0, savedStringLength);
-                }                
-            }
             return false;
         }
 
-        static void PrintList(List<int> list)
+        static void PrintDistances(int index, List<Position> positions)
         {
-            Console.Write("{");
-            foreach (var item in list)
+            for (int i = 0; i < positions.Count; i++)
             {
-                Console.Write($" {item} ");
+                //if (i == index) Console.WriteLine($"[{i}]: Self!");
+                Console.WriteLine($"[{i}]: " + Distance(positions[index], positions[i]));
             }
-            Console.Write("}\n");
+        }
+
+        static List<Position> ConvertToList(double[,] coords)
+        {
+            List<Position> list = new List<Position>();
+            for (int i = 0; i < coords.GetLength(0); i++)
+            {
+                list.Add(new Position(coords[i, 0], coords[i, 1]));
+            }
+            return list;
+        }
+
+        static double Distance(Position pos1, Position pos2)
+        {
+            return Math.Sqrt(Math.Pow((pos2.X - pos1.X), 2) + Math.Pow((pos2.Y - pos1.Y), 2));
+        }
+        
+    }
+
+    class Position
+    {
+        public double X, Y;
+        public Position(double x, double y)
+        {
+            X = x;
+            Y = y;          
+        }
+        public void Print()
+        {
+            Console.WriteLine($"( {X}, {Y} )");
         }
     }
 }
