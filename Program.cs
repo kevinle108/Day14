@@ -47,6 +47,7 @@ namespace Day14
 
         static void PrintDistances(int index, List<Position> positions, double d)
         {
+            Console.WriteLine($"For Tower {positions[index].AsText()}");
             List<Position> outOfRange = new List<Position>();
             List<Position> withinRange = new List<Position>();
             for (int i = 0; i < positions.Count; i++)
@@ -60,9 +61,9 @@ namespace Day14
                 if (Distance(positions[index], positions[i]) <= d)
                 {
                     withinRange.Add(positions[i]);
-                }                
+                }
+                Console.WriteLine($"  {positions[i].AsText()}: {Distance(positions[index], positions[i])}"); 
             }
-            Console.WriteLine($"For Tower {positions[index].AsText()}");
             Console.WriteLine($"Towers within range: {withinRange.Count}");
             Console.WriteLine($"Towers out of range: {outOfRange.Count}");
             Console.WriteLine();
@@ -97,7 +98,7 @@ namespace Day14
         }
         public string AsText()
         {
-            return $"( {X}, {Y} )";
+            return $"({X}, {Y})";
         }
     }
 }
