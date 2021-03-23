@@ -27,7 +27,10 @@ namespace Day14
             //pos.Print();
 
             List<Position> towers = ConvertToList(coords);
-            PrintDistances(4, towers);
+            for (int i = 0; i < towers.Count; i++)
+            {
+                PrintDistances(i, towers, d);
+            }
             //towers.ForEach(pos => pos.Print());
 
             
@@ -42,13 +45,29 @@ namespace Day14
             return false;
         }
 
-        static void PrintDistances(int index, List<Position> positions)
+        static void PrintDistances(int index, List<Position> positions, double d)
         {
+            List<Position> outOfRange = new List<Position>();
+            List<Position> withinRange = new List<Position>();
             for (int i = 0; i < positions.Count; i++)
             {
-                //if (i == index) Console.WriteLine($"[{i}]: Self!");
-                Console.WriteLine($"[{i}]: " + Distance(positions[index], positions[i]));
+                
+                if (i == index) continue;
+                if (Distance(positions[index], positions[i]) > d)
+                {
+                    outOfRange.Add(positions[i]);
+                }
+                if (Distance(positions[index], positions[i]) <= d)
+                {
+                    withinRange.Add(positions[i]);
+                }                
             }
+            Console.WriteLine($"For Tower {positions[index].AsText()}");
+            Console.WriteLine($"Towers within range: {withinRange.Count}");
+            Console.WriteLine($"Towers out of range: {outOfRange.Count}");
+            Console.WriteLine();
+            //if (i == index) Console.WriteLine($"[{i}]: Self!");
+            //Console.WriteLine($"[{i}]: " + Distance(positions[index], positions[i]));
         }
 
         static List<Position> ConvertToList(double[,] coords)
@@ -76,9 +95,9 @@ namespace Day14
             X = x;
             Y = y;          
         }
-        public void Print()
+        public string AsText()
         {
-            Console.WriteLine($"( {X}, {Y} )");
+            return $"( {X}, {Y} )";
         }
     }
 }
