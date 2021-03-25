@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Day14
 {
@@ -30,16 +31,17 @@ namespace Day14
             if (Grid(grid, pos, result))
             {
                 // print the result
-                Console.WriteLine("yes, it's possible");
+                Console.WriteLine("Yes, it's possible to reach the end:\n");
                 foreach (Position position in result)
                 {
-                    Console.WriteLine($"({position.X}, {position.Y})");
+                    Console.WriteLine($"({position.X},{position.Y}) Digit: {position.Digit(grid)}");
                 }
+                Console.WriteLine($"\nPath Length: {result.Count}");
             }
             else
             {
                 // print not possible
-                Console.WriteLine("no, not possible");
+                Console.WriteLine("No, it is not possible to reach the end.");
             }
         }
 
@@ -49,11 +51,18 @@ namespace Day14
             int d = grid[pos.Y, pos.X];
             result.Add(pos);
             if (pos.IsAtDestination(grid)) return true;
-            if (result.Count >= 1000) return false;
-            if (Grid(grid, new Position(pos.X + d, pos.Y), result)) return true; // go right
-            if (Grid(grid, new Position(pos.X, pos.Y + d), result)) return true; // go down            
-            if (Grid(grid, new Position(pos.X - d, pos.Y), result)) return true; // go left
-            if (Grid(grid, new Position(pos.X, pos.Y - d), result)) return true; // go up
+            List<Position> possiblePos = new List<Position> { 
+                new Position(pos.X + d, pos.Y),
+                new Position(pos.X, pos.Y + d),
+                //new Position(pos.X - d, pos.Y),
+                //new Position(pos.X, pos.Y - d)
+            };
+            var filtered = possiblePos.Where(pos => pos.IsWithinBound(grid)).ToList();
+            var sortedByDigit = filtered.OrderByDescending(pos => pos.Digit(grid)).ToList();            
+            foreach (Position position in sortedByDigit)
+            {
+                if (Grid(grid, position, result)) return true;                
+            }
             result.RemoveAt(result.Count - 1);
             return false;
         }
@@ -87,6 +96,11 @@ namespace Day14
                 if (X == p.X && Y == p.Y) return true; 
             }
             return false;
+        }
+
+        public int Digit(int[,] grid)
+        {
+            return grid[Y, X];
         }
     }
 
